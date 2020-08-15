@@ -1,0 +1,12 @@
+<h1>Produtos:</h1>
+{{#each produtos}}
+<div class="card mt-2">
+    <div class="card-body">
+        <h3>{{dataValues.nome}}</h3>
+        <text><b>R$: </b></text><text id="prc">{{dataValues.preco}}</text><br /><br />
+        <a href="/produtos/{{dataValues.nome}}" <button class="btn btn-success">Comprar</button></a>
+    </div>
+</div>
+{{else}}
+    <h5>Nenhum produto disponível</h5>
+{{/each}}

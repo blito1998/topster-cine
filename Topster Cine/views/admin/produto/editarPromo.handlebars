@@ -1,0 +1,31 @@
+{{#each erros}}
+<div class="alert alert-danger">{{text}}</div>
+{{else}}
+
+{{/each}}
+<h3>Editar Promoção:</h3>
+
+<div class="card">
+    <div class="card-body">
+        <form action="/admin/promo/update" method="post">
+            <label for="idPromo">ID da Promoção: </label>
+            <input type="text" id="idPromo" name="idPromo" placeholder="idPromo" class="form-control mt-2" value="{{promocao.promocaoID}}">
+
+            <label for="idProd" class="mt-2">Produtos: </label>
+            <select multiple name="idProd" class="custom-select" value ="{{promocao.produtoID}}">
+                {{#each produtos}}
+                <option value="{{id}}">{{nome}}</option>
+                {{else}}
+                <option value="0">Nenhum produto registrado!</option>
+                {{/each}}
+            </select>
+            <div class="form-group row mt-2">
+                <label for="preco" class="col-sm-2 col-form-label mt-2">Preço R$:</label>
+                <div class="col-sm-10">
+                    <input type="text" id="preco" name="preco" placeholder="00.00" class="form-control mt-2" onkeypress="$(this).mask('999.00', { reverse: true });" value="{{promocao.preco}}">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success mt-4">Editar Promoção</button>
+        </form>
+    </div>
+</div>

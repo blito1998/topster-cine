@@ -1,0 +1,28 @@
+<h1>Compras:</h1>
+{{#each compras}}
+<div class="card mt-2">
+    <div class="card-body">
+        <h3>{{dataValues.id}}</h3>
+        <p><b>Filme: </b> {{dataValues.filme}}</p>
+        <p><b>Produtos: </b> {{dataValues.produtos}}</p>
+        <p><b>Valor: </b> {{dataValues.valor}}</p>
+    </div>
+</div>
+{{else}}
+<h4 class="mt-4">Nenhum produto cadastrado!</h4>
+
+{{/each}}
+
+<h1>Promocções:</h1>
+{{#each promoção}}
+<div class="card mt-2">
+    <div class="card-body">
+        <h3>{{dataValues.promocaoID}}</h3>
+        <p><b>Produtos: </b> {{dataValues.produtosID}}</p>
+        <p><b>Valor: </b> {{dataValues.valor}}</p>
+    </div>
+</div>
+{{else}}
+<h4 class="mt-4">Nenhuma promoção cadastrado!</h4>
+
+{{/each}}

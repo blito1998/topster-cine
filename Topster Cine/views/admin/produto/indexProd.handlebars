@@ -1,0 +1,55 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Produtos:</h1>
+
+            <a href="/admin/produto/reg"><button class="btn btn-success mt-4">Novo Produto</button></a>
+
+            {{#each produtos}}
+            <div class="card mt-2">
+                <div class="card-body">
+                    <h3>{{id}} - {{nome}}</h3>
+                    <text><b>R$: </b></text><text>{{preco}}</text><br /><br />
+                    <a href="/admin/produto/edit/{{id}}"><button class="btn btn-success mt-2">Editar</button></a>
+                    <form action="/admin/produto/delete" method="post">
+                        <input type="hidden" name="id" value="{{id}}" />
+                        <button class="btn btn-danger mt-2">Deletar</button>
+                    </form>
+                </div>
+            </div>
+            {{else}}
+            <h4 class="mt-4">Nenhum produto cadastrado!</h4>
+
+            {{/each}}
+        </div>
+        ,
+        <div class="col">
+            <h1>Promoção:</h1>
+
+            <a href="/admin/promo/reg"><button class="btn btn-success mt-4">Nova Promoção</button></a>
+
+            {{#each promocoes}}
+            <div class="card mt-2">
+                <div class="card-body">
+                    <h3>{{promocaoID}}</h3>
+                    <text><b>Produto: </b></text><text>{{produtoID}}</text> <br />
+                    <text><b>R$: </b></text><text>{{preco}}</text><br /><br />
+                    <a href="/admin/promo/edit/{{promocaoID}}"><button class="btn btn-success mt-2">Editar</button></a>
+                    <form action="/admin/promo/delete" method="post">
+                        <input type="hidden" name="id" value="{{promocaoID}}" />
+                        <button class="btn btn-danger mt-2">Deletar</button>
+                    </form>
+                </div>
+            </div>
+            {{else}}
+            <h4 class="mt-4">Nenhum produto cadastrado!</h4>
+
+            {{/each}}
+
+        </div>
+    </div>
+</div>
+
+
+
+
