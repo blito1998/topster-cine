@@ -1,4 +1,4 @@
-{{#each erros}}
+ï»¿{{#each erros}}
 <div class="alert alert-danger">{{text}}</div>
 {{else}}
 
@@ -9,11 +9,11 @@
     <div class="card-body">
         <form action="/admin/filme/update" method="post">
             <input type="hidden" name="id" value="{{filme.id}}">
-            <label for="titulo">Título: </label>
+            <label for="titulo">TÃ­tulo: </label>
             <input type="text" id="titulo" name="titulo" placeholder="Titulo do Filme" class="form-control mt-2" value="{{filme.titulo}}">
             <label for="titulo">Diretor: </label>
             <input type="text" id="diretor" name="diretor" placeholder="Diretor do Filme" class="form-control mt-2" value="{{filme.diretor}}">
-            <label for="dataLancamento">Data de Lançamento: </label>
+            <label for="dataLancamento">Data de LanÃ§amento: </label>
             <input type="date" id="dataLancamento " name="dataLancamento" class="form-control mt-2" value="{{filme.ano}}">
             <label for="sinopse">Sinopse: </label>
             <textarea type="text" id="sinopse" name="sinopse" class="form-control mt-2">{{filme.sinopse}}</textarea>

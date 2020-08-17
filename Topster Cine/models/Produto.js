@@ -9,6 +9,6 @@ const Produto = db.connection.define("produtos", {
     }
 })
 
-//Produto.sync({force: true})
+Produto.sync()
 
 module.exports = Produto

@@ -23,6 +23,6 @@ const Filme = db.connection.define("filmes", {
     }
 })
 
-//Filme.sync({force: true})
+Filme.sync()
 
 module.exports = Filme

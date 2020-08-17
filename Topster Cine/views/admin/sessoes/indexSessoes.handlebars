@@ -1,0 +1,32 @@
+﻿<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Sessoes:</h1>
+
+            <a href="/admin/salas/reg"><button class="btn btn-success mt-4">Gerenciar Salas</button></a>
+            <a href="/admin/sessoes/reg"><button class="btn btn-success mt-4">Nova Sessão</button></a>
+
+            {{#each sessoes}}
+            <div class="card mt-2">
+                <div class="card-body">
+                    <h3>{{horario}}</h3>
+                    <text><b>Filme: </b></text><text>{{filmeId.titulo}}</text><br /><br />
+                    <text><b>Sala: </b></text><text>{{salaId.nomeSala}}</text><br /><br />
+                    <a href="/admin/sala/edit/{{id}}"><button class="btn btn-success mt-2">Editar</button></a>
+                    <form action="/admin/produto/delete" method="post">
+                        <input type="hidden" name="id" value="{{id}}" />
+                        <button class="btn btn-danger mt-2">Deletar</button>
+                    </form>
+                </div>
+            </div>
+            {{else}}
+            <h4 class="mt-4">Nenhuma sessão cadastrada!</h4>
+
+            {{/each}}
+        </div>
+    </div>
+</div>
+
+
+
+

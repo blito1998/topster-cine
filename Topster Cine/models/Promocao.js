@@ -12,6 +12,6 @@ const Promocao = db.connection.define("promocoes", {
     },
 })
 
-//Promocao.sync({force: true})
+Promocao.sync()
 
 module.exports = Promocao

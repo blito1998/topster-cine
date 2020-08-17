@@ -20,6 +20,6 @@ const Usuario = db.connection.define("usuarios", {
     }   
 })
 
-//Usuario.sync({force: true})
+Usuario.sync()
 
 module.exports = Usuario

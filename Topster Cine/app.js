@@ -21,6 +21,9 @@ const Produto = require("./models/Produto")
 const Promocao = require("./models/Promocao")
 const Compra = require("./models/Compra")
 const Usuario = require("./models/Usuario")
+const Sessao = require("./models/Sessao")
+const Sala = require("./models/Sala")
+const Poltrona = require("./models/Poltrona")
 
 //--------CONFIGURAÇÕES
 //TEMPLATE ENGINE
@@ -73,6 +76,7 @@ app.use(async (req, res, next) => {
     next()
 })
 
+
 //--------ROTAS
 app.get("/", (req, res) => {
     res.render("index")
@@ -89,7 +93,7 @@ app.get("/filmes", async (req, res) => {
 app.get("/filme/:titulo", (req, res) => {
     Filme.findOne({where: {titulo: req.params.titulo}}).then((filme) => {
         if(filme){
-            res.render("usuario/filme/index",{filme: filme})
+            res.render("usuario/filme/infoFilme",{filme: filme})
         }else{
             req.flash("msgError", "Este filme não existe")
             res.redirect("/")

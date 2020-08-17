@@ -9,6 +9,7 @@ const { isUser } = require("../config/permissoes")
 router.get("/registro", (req, res) => {
     res.render("usuario/registro")
 })
+
 //Validação
 router.post("/registro", (req , res) => {
     

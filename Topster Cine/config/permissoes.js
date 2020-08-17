@@ -1,4 +1,4 @@
-const Usuario = require("../models/Usuario")
+ï»¿const Usuario = require("../models/Usuario")
 
 module.exports = {
 
@@ -6,7 +6,7 @@ module.exports = {
         if (req.isAuthenticated()) {
             return next();
         }
-        req.flash("msgError", "Você precisa fazer login para acessar essa área")
+        req.flash("msgError", "VocÃª precisa fazer login para acessar essa Ã¡rea")
         res.redirect("/")
     },
 
@@ -15,7 +15,7 @@ module.exports = {
             return next()
         }
 
-        req.flash("msgError", "Você precisa fazer login como administrador para acessar essa área")
+        req.flash("msgError", "VocÃª precisa fazer login como administrador para acessar essa Ã¡rea")
         res.redirect("/")
     },
 
@@ -24,7 +24,7 @@ module.exports = {
             return next()
         }
 
-        req.flash("msgError", "Você precisa fazer login como administrador master para acessar essa área")
+        req.flash("msgError", "VocÃª precisa fazer login como administrador master para acessar essa Ã¡rea")
         res.redirect("/")
     }
 }

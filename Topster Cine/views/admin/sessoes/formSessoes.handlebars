@@ -1,0 +1,33 @@
+﻿{{#each erros}}
+<div class="alert alert-danger">{{text}}</div>
+{{else}}
+
+{{/each}}
+<h3>Nova Sala:</h3>
+
+<div class="card">
+    <div class="card-body">
+        <form action="/admin/sessoes/add" method="post">
+            <label for="horario">Horário: </label>
+            <input type="datetime-local" id="horario" name="horario" class="form-control mt-2">
+            <label for="filme">Filme: </label>
+            <select name="filme" class="custom-select">
+                {{#each filmes}}
+                <option value="{{id}}">{{titulo}}</option>
+                {{else}}
+                <option value="0">Nenhum filme registrado!</option>
+                {{/each}}
+            </select>
+
+            <label for="sala">Sala: </label>
+            <select name="sala" class="custom-select">
+                {{#each salas}}
+                <option value="{{id}}">{{nomeSala}}</option>
+                {{else}}
+                <option value="0">Nenhuma sala disponivel!</option>
+                {{/each}}
+            </select>
+            <button type="submit" class="btn btn-success mt-4">Cadastrar</button>
+        </form>
+    </div>
+</div>

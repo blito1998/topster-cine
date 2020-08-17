@@ -12,6 +12,6 @@ const Compra = db.connection.define("compras", {
     },
 })
 
-//Compra.sync({force: true})
+Compra.sync()
 
 module.exports = Compra

@@ -7,6 +7,9 @@ const Filme = require("../models/Filme")
 const Produto = require("../models/Produto")
 const Promocao = require("../models//Promocao")
 const Compra = require("../models/Compra")
+const Sessao = require("../models/Sessao")
+const Sala = require("../models/Sala")
+const Poltrona = require("../models/Poltrona")
 
 router.get("/", isAdmin, (req, res) => {
     res.render("admin/index")
@@ -203,6 +206,81 @@ router.post("/produto/delete", isAdmin, (req, res) => {
     }).catch((erro) => {
         req.flash("msgError", "Houve um erro ao deletar o Produto")
         res.redirect("/admin/produto")
+    })
+})
+
+//--------SESSOES
+router.get("/sessoes", isAdmin, async (req, res) => {
+    await Sessao.findAll().then((sessoes) => {
+        res.render("admin/sessoes/indexSessoes", { sessoes: sessoes })
+    })
+})
+
+router.get("/salas/reg", isAdmin, (req, res) => {
+    res.render("admin/sessoes/formSala")
+})
+
+//Função para preencher poltronas
+getPoltronas = (sala, capacidade) => {
+    for (i = 1; i <= capacidade; i++) {
+        Poltrona.create({
+            nomePoltrona: i,
+            salaId: sala
+        })
+    }
+}
+
+router.post("/salas/add", isAdmin, async (req, res) => {
+    await Sala.create({
+        nomeSala: req.body.nome,
+        capacidade: req.body.capacidade,
+    }).then(() => {
+        req.flash("msgSuccess", "Sala registrada com sucesso!")
+        res.redirect("/admin/sessoes")
+    }).catch((erro) => {
+        req.flash("msgError", "Não foi possível registrar a sala, tente novamente")
+        res.redirect("/admin/sessoes")
+    })
+
+    Sala.findOne({ where :{ nomeSala: req.body.nome }}).then((sala) => {
+        getPoltronas(sala.id, sala.capacidade)
+    })
+})
+
+router.get("/sessoes/reg", isAdmin, async (req, res) => {
+    await Sala.findAll().then((salas) => {
+        Filme.findAll({ where: { disponibilidade: "Em Breve" } }).then((filmes) => {
+            res.render("admin/sessoes/formSessoes", {salas: salas, filmes: filmes})
+        }).catch((erro) => {
+            req.flash("msgErro", "Houve um erro interno ao verificar os filmes")
+            res.redirect("/")
+        })
+    }).catch((erro) => {
+        req.flash("msgErro", "Houve um erro interno ao verificar as salas")
+        res.redirect("/")
+    })
+})
+
+router.post("/sessoes/add", isAdmin, async (req, res) => {
+    dateTime = req.body.horario.replace(/T/g, " às ");
+
+    Sessao.create({
+        horario: req.body.horario,
+        salaId: req.body.sala,
+        filmeId: req.body.filme
+    }).then(() => {
+        Filme.update({
+            disponibilidade: "Em Cartaz"
+        }, { where: { id: req.body.filme } }).then(() => {
+            req.flash("msgSuccess", "Sessao registrada com sucesso!")
+            res.redirect("/admin/sessoes")
+        }).catch((erro) => {
+            req.flash("msgError", "Houve um erro ao atualizar o filme, tente novamente!")
+            res.send("Houve um erro interno ao atualizar o filme")
+        })
+    }).catch((erro) => {
+        req.flash("msgError", "Não foi possível registrar a sessao, tente novamente: " + erro)
+        res.redirect("/admin/sessoes")
     })
 })
 
