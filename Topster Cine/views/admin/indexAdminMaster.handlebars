@@ -1,4 +1,6 @@
-﻿<h1>Lista de Usuários</h1>
+﻿<a href="/adminMaster/salas/reg"><button class="btn btn-success mt-4">Gerenciar Salas</button></a>
+
+<h1>Lista de Usuários</h1>
 
 <div class="container">
     <div class="row row-cols-5">
@@ -20,14 +22,14 @@
             <div class="col">{{tipoUser}}</div>
             <div class="col">
                 <form action="/adminMaster/up" method="post">
-                    <input type="hidden" name="id" value="{{id}}" />
+                    <input type="hidden" name="id" value="{{_id}}" />
                     <button class="btn btn-success mt-2">Promover</button>
                 </form>
 
             </div>
             <div class="col">
                 <form action="/adminMaster/down" method="post">
-                    <input type="hidden" name="id" value="{{id}}" />
+                    <input type="hidden" name="id" value="{{_id}}" />
                     <button class="btn btn-danger mt-2" disabled>Rebaixar</button>
                 </form>
 
@@ -49,14 +51,14 @@
             <div class="col">{{tipoUser}}</div>
             <div class="col">
                 <form action="/adminMaster/up" method="post">
-                    <input type="hidden" name="id" value="{{id}}" />
+                    <input type="hidden" name="id" value="{{_id}}" />
                     <button class="btn btn-success mt-2" disabled>Promover</button>
                 </form>
 
             </div>
             <div class="col">
                 <form action="/adminMaster/down" method="post">
-                    <input type="hidden" name="id" value="{{id}}" />
+                    <input type="hidden" name="id" value="{{_id}}" />
                     <button class="btn btn-danger mt-2">Rebaixar</button>
                 </form>
 

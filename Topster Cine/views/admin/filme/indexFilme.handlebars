@@ -5,14 +5,14 @@
 {{#each filmes}}
 <div class="card mt-2">
     <div class="card-body">
-        <h3>{{dataValues.titulo}}</h3>
-        <p><b>Diretor:</b> {{dataValues.diretor}}</p>
-        <p><b>Ano de Lançamento:</b> {{dataValues.ano}}</p>
-        <p><b>Sinopse:</b> {{dataValues.sinopse}}</p>
-        <p><b>Disponibilidade:</b> {{dataValues.disponibilidade}}</p>
-        <a href="/admin/filme/edit/{{dataValues.id}}"><button class="btn btn-success mt-2">Editar</button></a>
+        <h3>{{titulo}}</h3>
+        <p><b>Diretor:</b> {{diretor}}</p>
+        <p><b>Ano de Lançamento:</b> {{ano}}</p>
+        <p><b>Sinopse:</b> {{sinopse}}</p>
+        <p><b>Disponibilidade:</b> {{disponibilidade}}</p>
+        <a href="/admin/filme/edit/{{_id}}"><button class="btn btn-success mt-2">Editar</button></a>
         <form action="/admin/filme/delete" method="post">
-            <input type="hidden" name="id" value="{{dataValues.id}}" />
+            <input type="hidden" name="id" value="{{_id}}" />
             <button class="btn btn-danger mt-2">Deletar</button>
         </form>
     </div>

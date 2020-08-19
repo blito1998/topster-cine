@@ -8,11 +8,11 @@
             {{#each produtos}}
             <div class="card mt-2">
                 <div class="card-body">
-                    <h3>{{id}} - {{nome}}</h3>
+                    <h3>{{nome}}</h3>
                     <text><b>R$: </b></text><text>{{preco}}</text><br /><br />
-                    <a href="/admin/produto/edit/{{id}}"><button class="btn btn-success mt-2">Editar</button></a>
+                    <a href="/admin/produto/edit/{{_id}}"><button class="btn btn-success mt-2">Editar</button></a>
                     <form action="/admin/produto/delete" method="post">
-                        <input type="hidden" name="id" value="{{id}}" />
+                        <input type="hidden" name="id" value="{{_id}}" />
                         <button class="btn btn-danger mt-2">Deletar</button>
                     </form>
                 </div>

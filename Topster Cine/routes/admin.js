@@ -1,19 +1,28 @@
 const express = require("express")
 const router = express.Router()
+const bodyParser = require("body-parser")
 const { isAdmin } = require("../config/permissoes")
+const mongoose = require("mongoose")
 
-//--------MODELS
-const Filme = require("../models/Filme")
-const Produto = require("../models/Produto")
-const Promocao = require("../models//Promocao")
-const Compra = require("../models/Compra")
-const Sessao = require("../models/Sessao")
-const Sala = require("../models/Sala")
-const Poltrona = require("../models/Poltrona")
+//Models
+require("../models/Produto")
+const Produto = mongoose.model("produtos")
+require("../models/Promocao")
+const Promocao = mongoose.model("promocoes")
+require("../models/Sessao")
+const Sessao = mongoose.model("sessoes")
+require("../models/Filme")
+const Filme = mongoose.model("filmes")
+require("../models/Sala")
+const Sala = mongoose.model("salas")
 
 router.get("/", isAdmin, (req, res) => {
     res.render("admin/index")
 })
+
+//Route config
+router.use(bodyParser.urlencoded({ extended: false }))
+router.use(bodyParser.json())
 
 //--------FILMES
 var validationFilme = function (titulo, diretor, dataLancamento, sinopse, disponibilidade) {
@@ -43,7 +52,7 @@ var validationFilme = function (titulo, diretor, dataLancamento, sinopse, dispon
 }
 
 router.get("/filme", isAdmin, (req, res) => {
-    Filme.findAll({ order: [["id", "DESC"]] }).then((filmes) => {
+    Filme.find().then((filmes) => {
         res.render('admin/filme/indexFilme', { filmes: filmes })
     })
 })
@@ -60,13 +69,15 @@ router.post("/filme/add", isAdmin, (req, res) => {
     if (erros.length > 0) {
         res.render("admin/filme/formFilme", { erros: erros })
     } else {
-        Filme.create({
+        const newFilme = {
             titulo: req.body.titulo,
             diretor: req.body.diretor,
             ano: req.body.dataLancamento,
             sinopse: req.body.sinopse,
             disponibilidade: req.body.disponibilidade
-        }).then(() => {
+        }
+
+        new Filme(newFilme).save().then(() => {
             req.flash("msgSuccess", "Filme registrado com sucesso!")
             res.redirect("/admin/filme")
         }).catch((erro) => {
@@ -78,7 +89,7 @@ router.post("/filme/add", isAdmin, (req, res) => {
 
 //Update
 router.get("/filme/edit/:id", isAdmin, (req, res) => {
-    Filme.findOne({ where: { id: req.params.id } }).then((filme) => {
+    Filme.findOne({ _id: req.params.id }).then((filme) => {
         res.render("admin/filme/editarFilme", { filme: filme })
     }).catch((err) => {
         req.flash("msgError", "Filme não existe!")
@@ -92,26 +103,27 @@ router.post("/filme/update", isAdmin, (req, res) => {
     if (erros.length > 0) {
         res.render("admin/filme/formFilme", { erros: erros })
     } else {
-        Filme.update({
-            titulo: req.body.titulo,
-            diretor: req.body.diretor,
-            ano: req.body.dataLancamento,
-            sinopse: req.body.sinopse,
-            disponibilidade: req.body.disponibilidade
-        }, { where: { id: req.body.id } }).then(() => {
-            req.flash("msgSuccess", "Filme atualizado com sucesso!")
-            res.redirect("/admin/filme")
-        }).catch((erro) => {
-            req.flash("msgError", "Houve um erro ao atualizar o filme, tente novamente!")
-            res.send("Houve um erro:" + erro)
+        Filme.findOne({ _id: req.body.id }).then((filme) => {
+            filme.titulo = req.body.titulo
+            filme.diretor = req.body.diretor
+            filme.ano = req.body.dataLancamento
+            filme.sinopse = req.body.sinopse
+            filme.disponibilidade = req.body.disponibilidade
+
+            filme.save().then(() => {
+                req.flash("msgSuccess", "Filme atualizado com sucesso!")
+                res.redirect("/admin/filme")
+            }).catch((erro) => {
+                req.flash("msgError", "Houve um erro ao atualizar o filme, tente novamente!")
+                res.send("Houve um erro:" + erro)
+            })
         })
     }
 })
 
-
 //Delete
 router.post("/filme/delete", isAdmin, (req, res) => {
-    Filme.destroy({ where: { id: req.body.id } }).then(() => {
+    Filme.remove({ _id: req.body.id }).then(() => {
         req.flash("msgSuccess", "Filme deletado com sucesso!")
         res.redirect("/admin/filme")
     }).catch((erro) => {
@@ -136,7 +148,7 @@ var validationProd = function (nome, preco) {
 }
 
 router.get("/produto", isAdmin, (req, res) => {
-    Produto.findAll({ order: [["id", "DESC"]] }).then((produtos) => {
+    Produto.find().then((produtos) => {
         res.render("admin/produto/indexProd", { produtos: produtos })
     })
 })
@@ -154,10 +166,12 @@ router.post("/produto/add", isAdmin, (req, res) => {
     if (erros.length > 0) {
         res.render("admin/produto/formProd", { erros: erros })
     } else {
-        Produto.create({
+        const newProd = {
             nome: req.body.nome,
             preco: parseFloat(req.body.preco),
-        }).then(() => {
+        }
+
+        new Produto(newProd).save().then(() => {
             req.flash("msgSuccess", "Produto registrado com sucesso!")
             res.redirect("/admin/produto")
         }).catch((erro) => {
@@ -169,7 +183,7 @@ router.post("/produto/add", isAdmin, (req, res) => {
 
 //Update
 router.get("/produto/edit/:id", isAdmin, (req, res) => {
-    Produto.findOne({ where: { id: req.params.id } }).then((produto) => {
+    Produto.findOne({ _id: req.params.id }).then((produto) => {
         res.render("admin/produto/editarProd", { produto: produto })
     }).catch((err) => {
         req.flash("msgError", "produto não existe!")
@@ -185,22 +199,24 @@ router.post("/produto/update", isAdmin, (req, res) => {
     if (erros.length > 0) {
         res.render("admin/produto/formProd", { erros: erros })
     } else {
-        Produto.update({
-            nome: req.body.nome,
-            preco: parseFloat(req.body.preco),
-        }, { where: { id: req.body.id } }).then(() => {
-            req.flash("msgSuccess", "Produto atualizar com sucesso!")
-            res.redirect("/admin/produto")
-        }).catch((erro) => {
-            req.flash("msgError", "Não foi possível atualizar o produto, tente novamente")
-            res.redirect("/admin/produto")
+        Produto.findOne({ _id: req.body.id }).then((produto) => {
+            produto.nome = req.body.nome
+            produto.preco = parseFloat(req.body.preco)
+
+            produto.save().then(() => {
+                req.flash("msgSuccess", "Produto atualizar com sucesso!")
+                res.redirect("/admin/produto")
+            }).catch((erro) => {
+                req.flash("msgError", "Não foi possível atualizar o produto, tente novamente")
+                res.redirect("/admin/produto")
+            })
         })
     }
 })
 
 //Delete
 router.post("/produto/delete", isAdmin, (req, res) => {
-    Produto.destroy({ where: { id: req.body.id } }).then(() => {
+    Produto.remove({ _id: req.body.id }).then(() => {
         req.flash("msgSuccess", "Produto deletado com sucesso!")
         res.redirect("/admin/produto")
     }).catch((erro) => {
@@ -209,48 +225,109 @@ router.post("/produto/delete", isAdmin, (req, res) => {
     })
 })
 
+//--------PROMOÇÕES
+var validationPromo = function (nome, preco) {
+    var erros = []
+
+    if (!nome || typeof nome == undefined || !nome == null) {
+        erros.push({ text: "Nome inválido!" })
+    }
+
+    if (!preco || typeof preco == undefined || !preco == null) {
+        erros.push({ text: "Preco inválido!" })
+    }
+
+    return erros
+}
+
+//Insert
+router.get("/promo/reg", isAdmin, (req, res) => {
+    res.render("admin/promo/formPromo")
+})
+
+router.post("/promo/add", isAdmin, (req, res) => {
+    var erros = validationPromo(req.body.nome, req.body.preco)
+
+    console.log(erros)
+
+    if (erros.length > 0) {
+        res.render("admin/promo/formPromo", { erros: erros })
+    } else {
+        const newPromo = {
+            nome: req.body.nome,
+            produtoId: req.body.idProd,
+            preco: parseFloat(req.body.preco)
+        }
+
+        new Promocao(newPromo).save().then(() => {
+            req.flash("msgSuccess", "Promoção registrado com sucesso!")
+            res.redirect("/admin/produto")
+        }).catch((erro) => {
+            req.flash("msgError", "Não foi possível registrar a promoção, tente novamente")
+            res.redirect("/admin/produto")
+        })
+    }
+})
+
+//Update
+router.get("/promo/edit/:id", isAdmin, async (req, res) => {
+    await Promocao.findOne({ _id: req.params.id }).then((promo) => {
+        Produto.Find().then((prod) => {
+            res.render("admin/produto/editarProd", { promocao: promo, produtos: prod })
+        })
+    }).catch((err) => {
+        req.flash("msgError", "produto não existe!")
+        res.redirect("/admin/produto")
+    })
+})
+
+router.post("/produto/update", isAdmin, (req, res) => {
+    var erros = validationPromo(req.body.nome, req.body.preco)
+
+    console.log(erros)
+
+    if (erros.length > 0) {
+        res.render("admin/produto/formProd", { erros: erros })
+    } else {
+        Promocao.findOne({ _id: req.body.id }).then((promo) => {
+            promo.nome = req.body.nome
+            promo.produtoId = req.body.idProd
+            promo.preco = parseFloat(req.body.preco)
+
+            promo.save().then(() => {
+                req.flash("msgSuccess", "Promoção atualizada com sucesso!")
+                res.redirect("/admin/produto")
+            }).catch((erro) => {
+                req.flash("msgError", "Não foi possível atualizar a promoção, tente novamente")
+                res.redirect("/admin/produto")
+            })
+        })
+    }
+})
+
+//Delete
+router.post("/produto/delete", isAdmin, (req, res) => {
+    Promocao.remove({ _id: req.body.id }).then(() => {
+        req.flash("msgSuccess", "Promoção deletada com sucesso!")
+        res.redirect("/admin/produto")
+    }).catch((erro) => {
+        req.flash("msgError", "Houve um erro ao deletar a Promoção")
+        res.redirect("/admin/produto")
+    })
+})
+
 //--------SESSOES
 router.get("/sessoes", isAdmin, async (req, res) => {
-    await Sessao.findAll().then((sessoes) => {
+    Sessao.find().populate("filmes").then((sessoes) => {
+        console.log(sessoes)
         res.render("admin/sessoes/indexSessoes", { sessoes: sessoes })
     })
 })
 
-router.get("/salas/reg", isAdmin, (req, res) => {
-    res.render("admin/sessoes/formSala")
-})
-
-//Função para preencher poltronas
-getPoltronas = (sala, capacidade) => {
-    for (i = 1; i <= capacidade; i++) {
-        Poltrona.create({
-            nomePoltrona: i,
-            salaId: sala
-        })
-    }
-}
-
-router.post("/salas/add", isAdmin, async (req, res) => {
-    await Sala.create({
-        nomeSala: req.body.nome,
-        capacidade: req.body.capacidade,
-    }).then(() => {
-        req.flash("msgSuccess", "Sala registrada com sucesso!")
-        res.redirect("/admin/sessoes")
-    }).catch((erro) => {
-        req.flash("msgError", "Não foi possível registrar a sala, tente novamente")
-        res.redirect("/admin/sessoes")
-    })
-
-    Sala.findOne({ where :{ nomeSala: req.body.nome }}).then((sala) => {
-        getPoltronas(sala.id, sala.capacidade)
-    })
-})
-
 router.get("/sessoes/reg", isAdmin, async (req, res) => {
-    await Sala.findAll().then((salas) => {
-        Filme.findAll({ where: { disponibilidade: "Em Breve" } }).then((filmes) => {
-            res.render("admin/sessoes/formSessoes", {salas: salas, filmes: filmes})
+    await Sala.find().then((salas) => {
+        Filme.find({ disponibilidade: "Em Breve" }).then((filmes) => {
+            res.render("admin/sessoes/formSessoes", { salas: salas, filmes: filmes })
         }).catch((erro) => {
             req.flash("msgErro", "Houve um erro interno ao verificar os filmes")
             res.redirect("/")
@@ -262,26 +339,38 @@ router.get("/sessoes/reg", isAdmin, async (req, res) => {
 })
 
 router.post("/sessoes/add", isAdmin, async (req, res) => {
-    dateTime = req.body.horario.replace(/T/g, " às ");
 
-    Sessao.create({
-        horario: req.body.horario,
-        salaId: req.body.sala,
-        filmeId: req.body.filme
-    }).then(() => {
-        Filme.update({
-            disponibilidade: "Em Cartaz"
-        }, { where: { id: req.body.filme } }).then(() => {
-            req.flash("msgSuccess", "Sessao registrada com sucesso!")
-            res.redirect("/admin/sessoes")
-        }).catch((erro) => {
-            req.flash("msgError", "Houve um erro ao atualizar o filme, tente novamente!")
-            res.send("Houve um erro interno ao atualizar o filme")
-        })
-    }).catch((erro) => {
-        req.flash("msgError", "Não foi possível registrar a sessao, tente novamente: " + erro)
+    console.log(req.body)
+    console.log(req.body.sala + " " + req.body.filme)
+
+    if (!req.body.sala || !req.body.filme) {
+        req.flash("msgErro", "Registro de sessão inválido, tente novamente. Verifique se as salas e filmes são válidos")
         res.redirect("/admin/sessoes")
-    })
+    } else {
+        dateTime = req.body.horario.replace(/T/g, " às ");
+        var newSessao = {
+            horario: dateTime,
+            salaID: req.body.sala,
+            filmeID: req.body.filme
+        }
+
+        new Sessao(newSessao).save().then(() => {
+            Filme.findOne({ _id: req.body.filme }).then((filme) => {
+                filme.disponibilidade = "Em Cartaz"
+
+                filme.save().then(() => {
+                    req.flash("msgSuccess", "Sessao registrada com sucesso!")
+                    res.redirect("/admin/sessoes")
+                }).catch((erro) => {
+                    req.flash("msgError", "Houve um erro ao atualizar o filme, tente novamente!")
+                    res.send("Houve um erro interno ao atualizar o filme")
+                })
+            })
+        }).catch((erro) => {
+            req.flash("msgError", "Não foi possível registrar a sessão, tente novamente: " + erro)
+            res.redirect("/admin/sessoes")
+        })
+    }
 })
 
 module.exports = router

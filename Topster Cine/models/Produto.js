@@ -1,14 +1,15 @@
-const db = require("./db")
+const mongoose = require("mongoose")
+const Schema = mongoose.Schema
 
-const Produto = db.connection.define("produtos", {
+const Produto = new Schema({
     nome: {
-        type: db.Sequelize.STRING
+        type: String,
+        required: true
     },
     preco: {
-        type: db.Sequelize.FLOAT
+        type: Number,
+        required: true
     }
 })
 
-Produto.sync()
-
-module.exports = Produto
+mongoose.model("produtos", Produto)

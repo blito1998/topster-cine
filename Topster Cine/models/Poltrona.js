@@ -1,29 +1,21 @@
-const db = require("./db")
+const mongoose = require("mongoose")
+const Schema = mongoose.Schema
 
-const Poltrona = db.connection.define("poltronas", {
+const Poltrona = new Schema({
     nomePoltrona: {
-        type: db.Sequelize.STRING,
-        allowNull: false
+        type: String,
+        required: true
     },
     salaId: {
-        type: db.Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-            model: "salas",
-            key: "id"
-        }
+        type: Schema.Types.ObjectId,
+        ref: "salas",
+        required: true
     },
     status: {
-        type: db.Sequelize.STRING,
-        allowNull: false,
-        defaultValue: "Livre"
+        type: String,
+        required: true,
+        default: "Livre"
     }
 })
 
-Poltrona.associate = (models) => {
-    Poltrona.belongsTo(models.Sala, { foreignKey: "salaId", as: "sala" })
-}
-
-Poltrona.sync()
-
-module.exports = Poltrona
+mongoose.model("poltronas", Poltrona)

@@ -4,6 +4,7 @@ const Handlebars = require("handlebars")
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access')
 const bodyParser = require("body-parser")
 const app = express()
+const mongoose = require("mongoose")
 
 const admin = require("./routes/admin")
 const usuarios = require("./routes/usuario")
@@ -16,18 +17,29 @@ const passport = require ("passport")
 require("./config/auth")(passport)
 
 //--------MODELS
-const Filme = require("./models/Filme")
-const Produto = require("./models/Produto")
-const Promocao = require("./models/Promocao")
-const Compra = require("./models/Compra")
-const Usuario = require("./models/Usuario")
-const Sessao = require("./models/Sessao")
-const Sala = require("./models/Sala")
-const Poltrona = require("./models/Poltrona")
+require("./models/Produto")
+const Produto = mongoose.model("produtos")
+require("./models/Promocao")
+const Promocao = mongoose.model("promocoes")
+require("./models/Sessao")
+const Sessao = mongoose.model("sessoes")
+require("./models/Filme")
+const Filme = mongoose.model("filmes")
 
 //--------CONFIGURAÇÕES
-//TEMPLATE ENGINE
+//BDD
+mongoose.Promise = global.Promise
+mongoose.connect("mongodb://localhost/topster-cine",
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    }).then(() => {
+        console.log("Conectado ao bdd com sucesso!")
+    }).catch((err) => {
+        console.log("Houve um erro ao se conectar com o mongodb" + err)
+    })
 
+//TEMPLATE ENGINE
 app.engine('handlebars', handlebars({
     defaultLayout: 'main',
     handlebars: allowInsecurePrototypeAccess(Handlebars),
@@ -36,7 +48,7 @@ app.engine('handlebars', handlebars({
 app.set("view engine", "handlebars")
 
 //BODY PARSER
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 //PUBLIC
@@ -83,15 +95,15 @@ app.get("/", (req, res) => {
 })
 
 app.get("/filmes", async (req, res) => {
-    await Filme.findAll({ order: [["id", "DESC"]], where: { disponibilidade: "Em Cartaz" } }).then((EmCartaz) => {
-        Filme.findAll({ order: [["id", "DESC"]], where: { disponibilidade: "Em Breve" } }).then((EmBreve) => {
+    await Filme.find({ disponibilidade: "Em Cartaz" }).then((EmCartaz) => {
+        Filme.find({ disponibilidade: "Em Breve" }).then((EmBreve) => {
             res.render("usuario/filme/indexFilme", { filmesEmCartaz: EmCartaz, filmesEmBreve: EmBreve })
         })
     })
 })
 
 app.get("/filme/:titulo", (req, res) => {
-    Filme.findOne({where: {titulo: req.params.titulo}}).then((filme) => {
+    Filme.findOne({titulo: req.params.titulo}).then((filme) => {
         if(filme){
             res.render("usuario/filme/infoFilme",{filme: filme})
         }else{
@@ -105,7 +117,7 @@ app.get("/filme/:titulo", (req, res) => {
 })
 
 app.get("/produtos", (req, res) => {
-    Produto.findAll({ order: [["id", "DESC"]] }).then((produtos) => {
+    Produto.find().then((produtos) => {
         res.render("usuario/produto/index", { produtos: produtos })
     }).catch((erro) => {
         req.flash("msgError", "Houve um erro interno")
@@ -113,7 +125,7 @@ app.get("/produtos", (req, res) => {
     })
 })
 app.get("/produtos/:nome", (req, res) => {
-    Produto.findOne({ where: { nome: req.params.nome } }).then((produto) => {
+    Produto.find({nome: req.params.nome}).then((produto) => {
         res.render("usuario/produto/indexComp", { produto: produto })
     }).catch((err) => {
         req.flash("msgError", "Produto não existe")

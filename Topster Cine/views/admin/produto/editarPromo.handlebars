@@ -14,7 +14,7 @@
             <label for="idProd" class="mt-2">Produtos: </label>
             <select multiple name="idProd" class="custom-select" value ="{{promocao.produtoID}}">
                 {{#each produtos}}
-                <option value="{{id}}">{{nome}}</option>
+                <option value="{{_id}}">{{nome}}</option>
                 {{else}}
                 <option value="0">Nenhum produto registrado!</option>
                 {{/each}}

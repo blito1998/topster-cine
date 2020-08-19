@@ -1,20 +1,22 @@
 const localStrategy = require("passport-local").Strategy
 const bcrypt = require("bcryptjs")
+const mongoose = require ("mongoose")
 
 
 //MODEL de usuário
-
-const Usuario = require("../models/Usuario")
+require("../models/Usuario")
+const Usuario = mongoose.model("usuarios")
 
 //Sistema de autenticação
-
 module.exports = function(passport){
     passport.use(new localStrategy({ usernameField: "email", passwordField: "senha" }, (email, senha, done) => {
-        Usuario.findOne({ where: { email: email } }).then((usuario) => {
+        Usuario.findOne({ email: email } ).then((usuario) => {
             if(!usuario){
                 return done (null, false, {message: "Esta conta não existe"})
             }
-
+            if(usuario.verificado == 0){
+                return done (null, false, {message: "Está conta não foi verificada, favor olhar no seu e-mail o pedido de verificação"})
+            }
             bcrypt.compare(senha, usuario.senha, (erro, batem) => {
                 if(batem){
                     return done(null, usuario)
@@ -22,6 +24,7 @@ module.exports = function(passport){
                     return done(null, false, {message: "Senha incorreta"})
                 }
             })
+            
         })
     }))
 

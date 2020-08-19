@@ -1,28 +1,28 @@
-const db = require("./db")
+const mongoose = require("mongoose")
+const Schema = mongoose.Schema
 
-const Filme = db.connection.define("filmes", {
+const Filme = new Schema({
     titulo: {
-        type: db.Sequelize.STRING,
-        allowNull: false
+        type: String,
+        required: true
     },
     sinopse: {
-        type: db.Sequelize.TEXT,
-        allowNull: false
+        type: String,
+        required: true
     },
     ano: {
-        type: db.Sequelize.DATEONLY,
-        allowNull: false
+        type: Date,
+        required: true
     },
     disponibilidade: {
-        type: db.Sequelize.STRING,
-        allowNull: false
+        type: String,
+        required: true,
+        default: "Em Breve"
     },
     diretor: {
-        type: db.Sequelize.STRING,
-        allowNull: false
+        type: String,
+        required: true
     }
 })
 
-Filme.sync()
-
-module.exports = Filme
+mongoose.model("filmes", Filme)

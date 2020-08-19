@@ -1,20 +1,15 @@
-const db = require("./db")
+const mongoose = require("mongoose")
+const Schema = mongoose.Schema
 
-const Sala = db.connection.define("salas", {
+const Sala = new Schema({
     nomeSala: {
-        type: db.Sequelize.STRING,
-        allowNull: false,
+        type: String,
+        required: true
     },
     capacidade: {
-        type: db.Sequelize.INTEGER,
-        allowNull: false
+        type: Number,
+        required: true
     }
 })
 
-Sala.associate = (models) => {
-    Sala.hasMany(models.Poltrona, { as: "salaPoltronas" })
-}
-
-Sala.sync()
-
-module.exports = Sala
+mongoose.model("salas", Sala)

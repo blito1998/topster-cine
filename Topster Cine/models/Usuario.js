@@ -1,25 +1,33 @@
-const db = require("./db")
+const mongoose = require("mongoose")
+const Schema = mongoose.Schema
 
-const Usuario = db.connection.define("usuarios", {
+const Usuario = new Schema({
     nome: {
-        type: db.Sequelize.STRING,
+        type: String,
         required: true
     },  
     senha: {
-        type: db.Sequelize.STRING,
+        type: String,
         required: true
     },
     email: {
-        type: db.Sequelize.STRING,
+        type: String,
         required: true
     },
     tipoUser: {
-        type: db.Sequelize.STRING,
+        type: String,
         required: true,
-        defaultValue: "User"
-    }   
+        default: "User"
+    },
+    verificado: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    date: {
+        type: Date,
+        default: Date.now()
+    }
 })
 
-Usuario.sync()
-
-module.exports = Usuario
+mongoose.model("usuarios", Usuario)

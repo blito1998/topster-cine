@@ -8,7 +8,7 @@
 <div class="card">
     <div class="card-body">
         <form action="/admin/filme/update" method="post">
-            <input type="hidden" name="id" value="{{filme.id}}">
+            <input type="hidden" name="id" value="{{filme._id}}">
             <label for="titulo">Título: </label>
             <input type="text" id="titulo" name="titulo" placeholder="Titulo do Filme" class="form-control mt-2" value="{{filme.titulo}}">
             <label for="titulo">Diretor: </label>

@@ -9,20 +9,20 @@
     <div class="card-body">
         <form action="/admin/sessoes/add" method="post">
             <label for="horario">Horário: </label>
-            <input type="datetime-local" id="horario" name="horario" class="form-control mt-2">
+            <input type="datetime-local" id="horario" name="horario" class="form-control mt-2" required>
             <label for="filme">Filme: </label>
-            <select name="filme" class="custom-select">
+            <select name="filme" class="custom-select" required>
                 {{#each filmes}}
-                <option value="{{id}}">{{titulo}}</option>
+                <option value="{{_id}}">{{titulo}}</option>
                 {{else}}
                 <option value="0">Nenhum filme registrado!</option>
                 {{/each}}
             </select>
 
             <label for="sala">Sala: </label>
-            <select name="sala" class="custom-select">
+            <select name="sala" class="custom-select" required>
                 {{#each salas}}
-                <option value="{{id}}">{{nomeSala}}</option>
+                <option value="{{_id}}">{{nomeSala}}</option>
                 {{else}}
                 <option value="0">Nenhuma sala disponivel!</option>
                 {{/each}}

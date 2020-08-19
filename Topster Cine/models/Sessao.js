@@ -1,23 +1,26 @@
-const db = require("./db")
+const mongoose = require("mongoose")
+const Schema = mongoose.Schema
 
-const Filme = require("./Filme")
-const Sala = require("./Sala")
-
-const Sessao = db.connection.define("sessoes", {
+const Sessao = new Schema({
     horario: {
-        type: db.Sequelize.STRING,
-        allowNull: false
+        type: String,
+        required: true
     },
     status: {
-        type: db.Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: true
+        type: Boolean,
+        required: true,
+        default: true
+    },
+    filmeID: {
+        type: Schema.Types.ObjectId,
+        ref: "filmes",
+        required: true
+    },
+    salaID: {
+        type: Schema.Types.ObjectId,
+        ref: "salas",
+        required: true
     }
 })
 
-Sala.belongsToMany(Filme, { through: Sessao })
-Filme.belongsToMany(Sala, { through: Sessao })
-
-Sessao.sync()
-
-module.exports = Sessao
+mongoose.model("sessoes", Sessao)
