@@ -31,13 +31,17 @@
             <div class="card mt-2">
                 <div class="card-body">
                     <h3>{{promocaoID}}</h3>
-                    <text><b>Produto: </b></text><text>{{produtoID}}</text> <br />
-                    <text><b>R$: </b></text><text>{{preco}}</text><br /><br />
-                    <a href="/admin/promo/edit/{{promocaoID}}"><button class="btn btn-success mt-2">Editar</button></a>
-                    <form action="/admin/promo/delete" method="post">
-                        <input type="hidden" name="id" value="{{promocaoID}}" />
-                        <button class="btn btn-danger mt-2">Deletar</button>
-                    </form>
+                    <text>
+                        <b>Produtos: </b> <br />
+                        {{#each produtoID}}
+                            <text>{{nome}}</text> <br />
+                        {{/each}}
+                        <text><b>R$: </b></text><text>{{preco}}</text><br /><br />
+                        <a href="/admin/promo/edit/{{promocaoID}}"><button class="btn btn-success mt-2">Editar</button></a>
+                        <form action="/admin/promo/delete" method="post">
+                            <input type="hidden" name="id" value="{{promocaoID}}" />
+                            <button class="btn btn-danger mt-2">Deletar</button>
+                        </form>
                 </div>
             </div>
             {{else}}

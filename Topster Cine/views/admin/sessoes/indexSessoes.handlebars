@@ -10,11 +10,22 @@
                 <div class="card-body">
                     <h3>{{horario}}</h3>
                     <text><b>Filme: </b></text><text>{{filmeID.titulo}}</text><br /><br />
-                    <text><b>Sala: </b></text><text>{{salaID.titulo}}</text><br /><br />
-                    <a href="/admin/sala/edit/{{_id}}"><button class="btn btn-success mt-2">Editar</button></a>
-                    <form action="/admin/produto/delete" method="post">
+                    <text><b>Sala: </b></text><text>{{salaID.nomeSala}}</text><br /><br />
+
+                    {{#if status}}
+                    <text><b>Status: </b></text><text>Ativa</text><br /><br />
+                    {{else}}
+                    <text><b>Status: </b></text><text>Inativa</text><br /><br />
+                    {{/if}}
+
+
+                    <form action="/admin/sessoes/publish" method="post">
                         <input type="hidden" name="id" value="{{_id}}" />
-                        <button class="btn btn-danger mt-2">Deletar</button>
+                        <button class="btn btn-success mt-2">Publicar</button>
+                    </form>
+                    <form action="/admin/sessoes/unpublish" method="post">
+                        <input type="hidden" name="id" value="{{_id}}" />
+                        <button class="btn btn-danger mt-2">Remover Publicação</button>
                     </form>
                 </div>
             </div>

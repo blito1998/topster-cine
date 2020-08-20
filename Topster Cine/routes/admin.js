@@ -149,7 +149,15 @@ var validationProd = function (nome, preco) {
 
 router.get("/produto", isAdmin, (req, res) => {
     Produto.find().then((produtos) => {
-        res.render("admin/produto/indexProd", { produtos: produtos })
+        Promocao.find().populate("produtoID").then((promos) => {
+            res.render("admin/produto/indexProd", { produtos: produtos, promocoes: promos })
+        }).catch((err) => {
+            req.flash("msgError", "Não foi possivel identificar as promoções, erro interno: " + err)
+            req.redirect("/")
+        })
+    }).catch((err) => {
+        req.flash("msgError", "Houve um erro interno ao carregar a pagina: " + err)
+        req.redirect("/")
     })
 })
 
@@ -242,20 +250,23 @@ var validationPromo = function (nome, preco) {
 
 //Insert
 router.get("/promo/reg", isAdmin, (req, res) => {
-    res.render("admin/promo/formPromo")
+    Produto.find().then((produtos) => {
+        res.render("admin/produto/formPromo", { produtos: produtos })
+    }).catch((err) => {
+        req.flash("msgError", "Houve um erro interno ao identificar os produtos")
+        res.redirect("/admin/produto")
+    })
 })
 
 router.post("/promo/add", isAdmin, (req, res) => {
-    var erros = validationPromo(req.body.nome, req.body.preco)
-
-    console.log(erros)
+    var erros = validationPromo(req.body.idPromo, req.body.preco)
 
     if (erros.length > 0) {
-        res.render("admin/promo/formPromo", { erros: erros })
+        res.render("admin/produto/formPromo", { erros: erros })
     } else {
         const newPromo = {
-            nome: req.body.nome,
-            produtoId: req.body.idProd,
+            promocao: req.body.idPromo,
+            produtoID: req.body.idProd,
             preco: parseFloat(req.body.preco)
         }
 
@@ -263,7 +274,7 @@ router.post("/promo/add", isAdmin, (req, res) => {
             req.flash("msgSuccess", "Promoção registrado com sucesso!")
             res.redirect("/admin/produto")
         }).catch((erro) => {
-            req.flash("msgError", "Não foi possível registrar a promoção, tente novamente")
+            req.flash("msgError", "Não foi possível registrar a promoção, tente novamente" + erro)
             res.redirect("/admin/produto")
         })
     }
@@ -273,7 +284,7 @@ router.post("/promo/add", isAdmin, (req, res) => {
 router.get("/promo/edit/:id", isAdmin, async (req, res) => {
     await Promocao.findOne({ _id: req.params.id }).then((promo) => {
         Produto.Find().then((prod) => {
-            res.render("admin/produto/editarProd", { promocao: promo, produtos: prod })
+            res.render("admin/produto/editarPromo", { promocao: promo, produtos: prod })
         })
     }).catch((err) => {
         req.flash("msgError", "produto não existe!")
@@ -282,16 +293,16 @@ router.get("/promo/edit/:id", isAdmin, async (req, res) => {
 })
 
 router.post("/produto/update", isAdmin, (req, res) => {
-    var erros = validationPromo(req.body.nome, req.body.preco)
+    var erros = validationPromo(req.body.idPromo, req.body.preco)
 
     console.log(erros)
 
     if (erros.length > 0) {
-        res.render("admin/produto/formProd", { erros: erros })
+        res.render("admin/produto/formPromo", { erros: erros })
     } else {
         Promocao.findOne({ _id: req.body.id }).then((promo) => {
-            promo.nome = req.body.nome
-            promo.produtoId = req.body.idProd
+            promo.promocao = req.body.idPromo
+            promo.produtoID = req.body.idProd
             promo.preco = parseFloat(req.body.preco)
 
             promo.save().then(() => {
@@ -318,8 +329,7 @@ router.post("/produto/delete", isAdmin, (req, res) => {
 
 //--------SESSOES
 router.get("/sessoes", isAdmin, async (req, res) => {
-    Sessao.find().populate("filmes").then((sessoes) => {
-        console.log(sessoes)
+    Sessao.find().populate("filmeID").populate("salaID").then((sessoes) => {
         res.render("admin/sessoes/indexSessoes", { sessoes: sessoes })
     })
 })
@@ -372,5 +382,27 @@ router.post("/sessoes/add", isAdmin, async (req, res) => {
         })
     }
 })
+
+router.post("/sessoes/unpublish", isAdmin, (req, res) => {
+
+    Sessao.update({ _id: req.body.id }, { status: false }).then(() => {
+        req.flash("msgSuccess", "Sessão removida com sucesso")
+        res.redirect("/admin/sessoes")
+    }).catch((err) => {
+        req.flash("msgError", "Houve um erro ao atualizar o status da sessão")
+        res.redirect("/admin/sessoes")
+    })
+})
+
+router.post("/sessoes/publish", isAdmin, async (req, res) => {
+    Sessao.update({ _id: req.body.id }, { status: true }).then(() => {
+        req.flash("msgSuccess", "Sessão removida com sucesso")
+        res.redirect("/admin/sessoes")
+    }).catch((err) => {
+        req.flash("msgError", "Houve um erro ao atualizar o status da sessão")
+        res.redirect("/admin/sessoes")
+    })
+})
+
 
 module.exports = router

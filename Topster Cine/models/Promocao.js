@@ -6,11 +6,11 @@ const Promocao = new Schema({
         type: String,
         required: true
     },
-    produtoID: {
+    produtoID: [{
         type: Schema.Types.ObjectId,
         ref: "produtos",
         required: true
-    },
+    }],
     preco: {
         type: Number,
         required: true
