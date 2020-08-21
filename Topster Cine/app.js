@@ -5,6 +5,7 @@ const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-ac
 const bodyParser = require("body-parser")
 const app = express()
 const mongoose = require("mongoose")
+const cors = require("cors")
 
 const admin = require("./routes/admin")
 const usuarios = require("./routes/usuario")
@@ -27,6 +28,16 @@ require("./models/Filme")
 const Filme = mongoose.model("filmes")
 
 //--------CONFIGURAÇÕES
+
+//CONEXÃO COM O FRONT
+app.use((req, res , next)=>{
+    res.header("Access-Control-Allow-Origin","*")
+    res.header("Access-Control-Allow-Methods", 'GET,PUT,POST,DELETE')
+    res.header("")
+    app.use(cors())
+    next()
+})
+
 //BDD
 mongoose.Promise = global.Promise
 mongoose.connect("mongodb://localhost/topster-cine",
@@ -94,13 +105,16 @@ app.get("/", (req, res) => {
     res.render("index")
 })
 
-app.get("/filmes", async (req, res) => {
-    await Filme.find({ disponibilidade: "Em Cartaz" }).then((EmCartaz) => {
-        Filme.find({ disponibilidade: "Em Breve" }).then((EmBreve) => {
-            res.render("usuario/filme/indexFilme", { filmesEmCartaz: EmCartaz, filmesEmBreve: EmBreve })
+app.get("/filmes", (req, res) => {
+    Filme.find({}).then((filme) => {
+        return res.json(filme);
+    }).catch((erro) => {
+        return res.status(400).json({
+            error: true,
+            message: "Nenhum filme encontrado"
         })
     })
-})
+});
 
 app.get("/filme/:titulo", (req, res) => {
     Filme.findOne({titulo: req.params.titulo}).then((filme) => {
